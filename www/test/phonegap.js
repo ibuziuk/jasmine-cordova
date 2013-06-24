@@ -55,7 +55,7 @@ describe("Phonegap", function() {
             },
             error:function(){},
             valueChecker:function(){}
-        }
+        };
         spyOn(obj, 'success').andCallThrough();
         spyOn(obj, 'error');
         spyOn(obj, 'valueChecker');
@@ -78,4 +78,49 @@ describe("Phonegap", function() {
         });
     });
 
+    it("Geolocation API", function() {
+        console.log("Testing Geolocation API");
+
+        var obj = {
+            success:function(position) {
+                expect(position.coords).toBeDefined();
+
+                expect(position.coords.longitude).toBeDefined();
+                expect(position.coords.longitude).not.toBeNull();
+
+                expect(position.coords.altitude).toBeDefined();
+                expect(position.coords.altitude).not.toBeNull();
+
+                expect(position.coords.accuracy).toBeDefined();
+                expect(position.coords.accuracy).not.toBeNull();
+
+                expect(position.coords.heading).toBeDefined();
+                expect(position.coords.heading).not.toBeNull();
+
+                expect(position.coords.speed).toBeDefined();
+                expect(position.coords.speed).not.toBeNull();
+
+                expect(position.timestamp).toBeDefined();
+                expect(position.timestamp).not.toBeNull();
+            },
+            error:function() {
+                console.log("Error while simulating Geolocation API");
+            }
+        };
+        spyOn(obj, "success").andCallThrough();
+        spyOn(obj, "error").andCallThrough();
+
+        runs(function() {
+            navigator.geolocation.getCurrentPosition(obj.success, obj.error);
+        });
+
+        waitsFor(function(){
+            return obj.success.callCount > 0 || obj.error.callCount > 0;
+        });
+
+        runs(function() {
+            expect(obj.success.callCount).toBe(1);
+            expect(obj.error.callCount).toBe(0);
+        });
+    });
 });
