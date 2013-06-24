@@ -73,7 +73,7 @@ describe("Phonegap", function() {
         spyOn(obj, 'error');
         spyOn(obj, 'valueChecker');
         runs(function(){
-            var db = openDatabase('mydb1', '1.0', '', 2 * 1024 * 1024);
+            var db = openDatabase('mydb', '1.0','mydb', 2 * 1024 * 1024);
             db.transaction(function (tx) {
                 tx.executeSql('DROP TABLE IF EXISTS foo');
                 tx.executeSql('CREATE TABLE IF NOT EXISTS foo (id unique, text)');
@@ -135,5 +135,22 @@ describe("Phonegap", function() {
             expect(obj.success.callCount).toBe(1);
             expect(obj.error.callCount).toBe(0);
         });
+    });
+
+    it("Connection API", function() {
+        console.log("Testing Geolocation API");
+
+        var networkState = navigator.connection.type;
+        var states = {};
+        states[Connection.UNKNOWN]  = 'Unknown connection';
+        states[Connection.ETHERNET] = 'Ethernet connection';
+        states[Connection.WIFI]     = 'WiFi connection';
+        states[Connection.CELL_2G]  = 'Cell 2G connection';
+        states[Connection.CELL_3G]  = 'Cell 3G connection';
+        states[Connection.CELL_4G]  = 'Cell 4G connection';
+        states[Connection.CELL]     = 'Cell generic connection';
+        states[Connection.NONE]     = 'No network connection';
+
+        expect(states[networkState]).toBe( states[Connection.ETHERNET]); // By Default "Ethernet" Connection is used in the CordovaSim (it can be changed in the "Device & Network Setting" tab)
     });
 });
