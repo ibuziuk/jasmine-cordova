@@ -28,19 +28,32 @@ describe("Phonegap", function() {
 	});
 
 	it("Compass API", function() {
-        // TODO This test will not pass only when cordova.js isn't found
 		console.log("Testing Compass API");
 
-        expect(navigator.compass).toBeDefined();
+        var obj = {
+            success:function(heading) {
+                expect(heading.magneticHeading).toBeDefined();
+                expect(heading.magneticHeading).not.toBeNull();
+            },
+            error:function() {
+                console.log("Error while simulating Compass API");
+            }
+        };
+        spyOn(obj, "success").andCallThrough();
+        spyOn(obj, "error").andCallThrough();
 
-        function onSuccess(heading) {
-            expect(heading.magneticHeading).toBeGreaterThan( -1 );
-        }
+        runs(function() {
+            navigator.compass.watchHeading(obj.success, obj.error);
+        });
 
-        function onError(compassError) {
-        }
+        waitsFor(function(){
+            return obj.success.callCount > 0 || obj.error.callCount > 0;
+        });
 
-		navigator.compass.getCurrentHeading(onSuccess, onError);
+        runs(function() {
+            expect(obj.success.callCount).toBe(1);
+            expect(obj.error.callCount).toBe(0);
+        });
 	});
 
     it("Storage API", function() {
