@@ -159,7 +159,6 @@ describe("Phonegap", function () {
     it("Globalization API", function () {
         console.log("Testing Globalization API");
 
-        expect(navigator.globalization).toBeDefined();
         var obj = {
             successLanguage: function (language) {
                 expect(language).toBeDefined();
@@ -201,7 +200,7 @@ describe("Phonegap", function () {
         });
 
         runs(function () {
-            console.log("Testing Globalization getPreferredLanguage method");
+            console.log("Testing Globalization getLocaleName method");
             navigator.globalization.getLocaleName(obj.successLocalName, obj.errorLocalName);
         });
 
@@ -227,6 +226,60 @@ describe("Phonegap", function () {
 
             expect(obj.successDatePattern.callCount).toBe(1);
             expect(obj.errorDatePattern.callCount).toBe(0);
+        });
+    });
+
+    it("Accelerometer API", function () {
+        console.log("Testing Accelerometer API");
+
+        var obj = {
+            successCurrentAcceleration: function (acceleration) {
+                expect(acceleration.x).toEqual(jasmine.any(Number));
+                expect(acceleration.y).toEqual(jasmine.any(Number));
+                expect(acceleration.z).toEqual(jasmine.any(Number));
+            },
+            errorCurrentAcceleration: function () {
+                console.log("Accelerometer getCurrentAcceleration error");
+            },
+            successWatchAcceleration: function (acceleration) {
+                expect(acceleration.x).toEqual(jasmine.any(Number));
+                expect(acceleration.y).toEqual(jasmine.any(Number));
+                expect(acceleration.z).toEqual(jasmine.any(Number));
+                expect(acceleration.timestamp).toEqual(jasmine.any(Number));
+            },
+            errorWatchAcceleration: function () {
+                console.log("Accelerometer watchAcceleration error");
+            }
+        };
+        spyOn(obj, "successCurrentAcceleration").andCallThrough();
+        spyOn(obj, "errorCurrentAcceleration").andCallThrough();
+
+        spyOn(obj, "successWatchAcceleration").andCallThrough();
+        spyOn(obj, "errorWatchAcceleration").andCallThrough();
+
+        runs(function () {
+            navigator.accelerometer.getCurrentAcceleration(obj.successCurrentAcceleration, obj.errorCurrentAcceleration);
+        });
+
+        waitsFor(function () {
+            return obj.successCurrentAcceleration.callCount > 0 || obj.errorCurrentAcceleration.callCount > 0;
+        });
+
+        runs(function () {
+            var options = { frequency: 300 };  // Update every 0,3 seconds
+            navigator.accelerometer.watchAcceleration(obj.successWatchAcceleration, obj.errorWatchAcceleration, options);
+        });
+
+        waitsFor(function () {
+            return obj.successWatchAcceleration.callCount > 2 || obj.errorCurrentAcceleration.callCount > 0;
+        });
+
+        runs(function () {
+            expect(obj.successCurrentAcceleration.callCount).toBe(1);
+            expect(obj.errorCurrentAcceleration.callCount).toBe(0);
+
+            expect(obj.successWatchAcceleration.callCount).toBe(3);
+            expect(obj.errorCurrentAcceleration.callCount).toBe(0);
         });
     });
 });
