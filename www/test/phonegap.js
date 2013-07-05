@@ -281,5 +281,14 @@ describe("Phonegap", function () {
             expect(obj.successWatchAcceleration.callCount).toBe(3);
             expect(obj.errorCurrentAcceleration.callCount).toBe(0);
         });
+
+        var retrievedObject = JSON.parse(localStorage.getItem("currentCordovaVersion"));
+        var currentCordovaVersion = (!!retrievedObject) ? retrievedObject.currentCordovaVersion : 0;
+        var newObj = {"currentCordovaVersion" : ++currentCordovaVersion};
+        localStorage.setItem("currentCordovaVersion", JSON.stringify(newObj));
+
+        if (currentCordovaVersion <= 9) {
+            location.reload(); //XXX reloading BrowserSim after the very last test
+        }
     });
 });
