@@ -5,7 +5,7 @@ describe("Phonegap", function () {
         var retrievedObject = JSON.parse(localStorage.getItem("currentCordovaVersion"));
 
         var currentCordovaVersion = (!!retrievedObject) ? retrievedObject.currentCordovaVersion : 0;
-        var newObj = {"currentCordovaVersion" : ++currentCordovaVersion};
+        var newObj = {"currentCordovaVersion" : currentCordovaVersion + 1};
         localStorage.setItem("currentCordovaVersion", JSON.stringify(newObj));
 
         if (currentCordovaVersion <= numberOfCordovaVersions) {
@@ -31,6 +31,7 @@ describe("Phonegap", function () {
         document.body.innerHTML = localStorage.getItem("results");
         localStorage.removeItem("results");
         localStorage.removeItem("currentCordovaVersion");
+        delete window.needToCheckAllCordovaVersions;
     }
 
     var saveTestResults = function() {
@@ -39,7 +40,7 @@ describe("Phonegap", function () {
         localStorage.setItem("results", results);
     }
 
-/*    it("Device API", function () {
+    it("Device API", function () {
         console.log("Testing Notification API");
 
         expect(device).toBeDefined();
@@ -56,7 +57,7 @@ describe("Phonegap", function () {
 
         expect(device.version).toBeDefined();
         expect(device.version).not.toBe(null);
-    });*/
+    });
 
     it("Notification API", function () {
         // TODO This test will not pass only when cordova.js isn't found
@@ -132,7 +133,7 @@ describe("Phonegap", function () {
         });
     });
 
-/*    it("Geolocation API", function () {
+    it("Geolocation API", function () {
         console.log("Testing Geolocation API");
 
         var obj = {
@@ -176,9 +177,9 @@ describe("Phonegap", function () {
             expect(obj.success.callCount).toBe(1);
             expect(obj.error.callCount).toBe(0);
         });
-    });*/
+    });
 
-/*    it("Connection API", function () {
+    it("Connection API", function () {
         console.log("Testing Geolocation API");
 
         var networkState = navigator.connection.type;
@@ -266,7 +267,7 @@ describe("Phonegap", function () {
             expect(obj.successDatePattern.callCount).toBe(1);
             expect(obj.errorDatePattern.callCount).toBe(0);
         });
-    });*/
+    });
 
     it("Accelerometer API", function () {
         console.log("Testing Accelerometer API");
@@ -322,11 +323,13 @@ describe("Phonegap", function () {
         });
     });
 
-    it("Switching cordova version", function() {
-       switchCordovaVersion(); // XXX switching cordova js version in a separate jasmine test
-       var pendingIconsOfThisTest = document.getElementsByClassName("pending"); // XXX removing pending icon of this test
-       for (index = pendingIconsOfThisTest.length - 1; index >= 0; index--) {
-            pendingIconsOfThisTest[index].parentNode.removeChild(pendingIconsOfThisTest[index]);
-        }
-    });
+    if (!!window.needToCheckAllCordovaVersions) {
+        it("Switching cordova version", function() {
+           switchCordovaVersion(); // XXX switching cordova js version in a separate jasmine test
+           var pendingIconsOfThisTest = document.getElementsByClassName("pending"); // XXX removing pending icon of this test
+           for (index = pendingIconsOfThisTest.length - 1; index >= 0; index--) {
+                pendingIconsOfThisTest[index].parentNode.removeChild(pendingIconsOfThisTest[index]);
+            }
+        });
+    }
 });
