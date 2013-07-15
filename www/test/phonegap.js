@@ -1,20 +1,45 @@
 describe("Phonegap", function () {
 
     var switchCordovaVersion = function() {
-        var numberOfCordovaVersions = 9;
+        var numberOfCordovaVersions = 9; // hard coded number of cordova versions we want to check (2.0.0 - 2.9.0)
         var retrievedObject = JSON.parse(localStorage.getItem("currentCordovaVersion"));
+
         var currentCordovaVersion = (!!retrievedObject) ? retrievedObject.currentCordovaVersion : 0;
         var newObj = {"currentCordovaVersion" : ++currentCordovaVersion};
         localStorage.setItem("currentCordovaVersion", JSON.stringify(newObj));
 
         if (currentCordovaVersion <= numberOfCordovaVersions) {
+            addCordovaVersionInfo(currentCordovaVersion);
+            saveTestResults();
             location.reload();
         } else {
-            localStorage.removeItem("currentCordovaVersion");
+            doAfterAllTests();
         }
     };
 
-    it("Device API", function () {
+    var addCordovaVersionInfo = function(currentCordovaVersion) {
+        var cordovaVersionContainer = document.createElement("div");
+        var cordovaVersionHeader = document.createElement("h1");
+        cordovaVersionHeader.innerHTML = "Cordova-2." + currentCordovaVersion + ".0.js";
+        var breaker = document.createElement("hr"); // XXX deprecated in HTML 5
+        cordovaVersionContainer.appendChild(breaker);
+        cordovaVersionContainer.appendChild(cordovaVersionHeader);
+        document.body.insertBefore(cordovaVersionContainer, document.body.firstElementChild);
+    }
+
+    var doAfterAllTests = function() {
+        document.body.innerHTML = localStorage.getItem("results");
+        localStorage.removeItem("results");
+        localStorage.removeItem("currentCordovaVersion");
+    }
+
+    var saveTestResults = function() {
+        var previousResults = localStorage.getItem("results");
+        var results = (!!previousResults) ? previousResults + document.body.innerHTML : document.body.innerHTML;
+        localStorage.setItem("results", results);
+    }
+
+/*    it("Device API", function () {
         console.log("Testing Notification API");
 
         expect(device).toBeDefined();
@@ -31,7 +56,7 @@ describe("Phonegap", function () {
 
         expect(device.version).toBeDefined();
         expect(device.version).not.toBe(null);
-    });
+    });*/
 
     it("Notification API", function () {
         // TODO This test will not pass only when cordova.js isn't found
@@ -107,7 +132,7 @@ describe("Phonegap", function () {
         });
     });
 
-    it("Geolocation API", function () {
+/*    it("Geolocation API", function () {
         console.log("Testing Geolocation API");
 
         var obj = {
@@ -151,9 +176,9 @@ describe("Phonegap", function () {
             expect(obj.success.callCount).toBe(1);
             expect(obj.error.callCount).toBe(0);
         });
-    });
+    });*/
 
-    it("Connection API", function () {
+/*    it("Connection API", function () {
         console.log("Testing Geolocation API");
 
         var networkState = navigator.connection.type;
@@ -241,7 +266,7 @@ describe("Phonegap", function () {
             expect(obj.successDatePattern.callCount).toBe(1);
             expect(obj.errorDatePattern.callCount).toBe(0);
         });
-    });
+    });*/
 
     it("Accelerometer API", function () {
         console.log("Testing Accelerometer API");
@@ -295,6 +320,13 @@ describe("Phonegap", function () {
             expect(obj.successWatchAcceleration.callCount).toBe(3);
             expect(obj.errorCurrentAcceleration.callCount).toBe(0);
         });
-        switchCordovaVersion();
+    });
+
+    it("Switching cordova version", function() {
+       switchCordovaVersion(); // XXX switching cordova js version in a separate jasmine test
+       var pendingIconsOfThisTest = document.getElementsByClassName("pending"); // XXX removing pending icon of this test
+       for (index = pendingIconsOfThisTest.length - 1; index >= 0; index--) {
+            pendingIconsOfThisTest[index].parentNode.removeChild(pendingIconsOfThisTest[index]);
+        }
     });
 });

@@ -9,6 +9,7 @@ cordovaVersions[6] = "cordova-2.6.0.js";
 cordovaVersions[7] = "cordova-2.7.0.js";
 cordovaVersions[8] = "cordova-2.8.0.js";
 cordovaVersions[9] = "cordova-2.9.0.js";
+//TODO cordova-2.8.1 is not in the array
 
 var retrievedObject = JSON.parse(localStorage.getItem("currentCordovaVersion"));
 var currentCordovaVersion = (!!retrievedObject) ? retrievedObject.currentCordovaVersion : 0;
