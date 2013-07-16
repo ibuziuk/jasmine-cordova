@@ -1,44 +1,63 @@
 describe("Phonegap", function () {
 
     var switchCordovaVersion = function() {
-        var numberOfCordovaVersions = 9; // hard coded number of cordova versions we want to check (2.0.0 - 2.9.0)
+        var lastIndex = 9; // last index of the array with all cordova.js versions - see cordovaSwither.js
         var retrievedObject = JSON.parse(localStorage.getItem("currentCordovaVersion"));
+        var currentIndex = (!!retrievedObject) ? retrievedObject.currentCordovaVersion : 0;
 
-        var currentCordovaVersion = (!!retrievedObject) ? retrievedObject.currentCordovaVersion : 0;
-        var newObj = {"currentCordovaVersion" : currentCordovaVersion + 1};
-        localStorage.setItem("currentCordovaVersion", JSON.stringify(newObj));
-
-        if (currentCordovaVersion <= numberOfCordovaVersions) {
+        if (currentIndex <= lastIndex) {
+            var currentCordovaVersion = getCurrentCordovaVersion(currentIndex);
             addCordovaVersionInfo(currentCordovaVersion);
+            addInfoAboutCordovaVersionToAllDescriptionLinks(currentCordovaVersion);
             saveTestResults();
-            location.reload();
-        } else {
-            doAfterAllTests();
+            if(currentIndex !== 9) {
+                incrementCordovaVersion(currentIndex);
+                location.reload();
+            } else { // we reach the last element of the array, all tests have been run
+                doAfterAllTests();
+            }
+        }
+    };
+
+    var getCurrentCordovaVersion = function(currentIndex) {
+        return "Cordova-2." + currentIndex + ".0.js";
+    };
+
+    var incrementCordovaVersion = function(currentCordovaVersion) {
+        var newObj = {"currentCordovaVersion" : ++currentCordovaVersion};
+        localStorage.setItem("currentCordovaVersion", JSON.stringify(newObj));
+    };
+
+    var addInfoAboutCordovaVersionToAllDescriptionLinks = function(currentCordovaVersion) {
+        var links = document.getElementsByClassName("description");
+        for(var i = 0; i < links.length; i++){
+            var hrefWithCordovaVersion = links[i].getAttribute("href") + "#,afterAllTests,"  + currentCordovaVersion;
+            links[i].setAttribute("href", hrefWithCordovaVersion);
         }
     };
 
     var addCordovaVersionInfo = function(currentCordovaVersion) {
         var cordovaVersionContainer = document.createElement("div");
         var cordovaVersionHeader = document.createElement("h1");
-        cordovaVersionHeader.innerHTML = "Cordova-2." + currentCordovaVersion + ".0.js";
-        var breaker = document.createElement("hr"); // XXX deprecated in HTML 5
-        cordovaVersionContainer.appendChild(breaker);
+        cordovaVersionHeader.innerHTML = currentCordovaVersion;
+        var hr = document.createElement("hr"); // XXX deprecated in HTML 5
+        cordovaVersionContainer.appendChild(hr);
         cordovaVersionContainer.appendChild(cordovaVersionHeader);
         document.body.insertBefore(cordovaVersionContainer, document.body.firstElementChild);
-    }
+    };
+
+    var saveTestResults = function() {
+        var previousResults = localStorage.getItem("results");
+        var results = (!!previousResults) ? previousResults + document.body.innerHTML : document.body.innerHTML;
+        localStorage.setItem("results", results);
+    };
 
     var doAfterAllTests = function() {
         document.body.innerHTML = localStorage.getItem("results");
         localStorage.removeItem("results");
         localStorage.removeItem("currentCordovaVersion");
         delete window.needToCheckAllCordovaVersions;
-    }
-
-    var saveTestResults = function() {
-        var previousResults = localStorage.getItem("results");
-        var results = (!!previousResults) ? previousResults + document.body.innerHTML : document.body.innerHTML;
-        localStorage.setItem("results", results);
-    }
+    };
 
     it("Device API", function () {
         console.log("Testing Notification API");

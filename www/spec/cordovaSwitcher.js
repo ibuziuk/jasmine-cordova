@@ -1,6 +1,8 @@
 var parameters = window.location.hash.substr(1).split(",");
-var cordovaVersionFromUrl = parameters[0];
-window.needToCheckAllCordovaVersions = parameters[1];  // XXX global flag
+if (parameters[0].substring(0, 7) === "cordova") {
+    localStorage.setItem("cordovaVersionFromUrl", parameters[0]);
+    window.needToCheckAllCordovaVersions = parameters[1]; // XXX global flag
+}
 var cordovaLink;
 
 if (!!window.needToCheckAllCordovaVersions) {
@@ -21,9 +23,8 @@ if (!!window.needToCheckAllCordovaVersions) {
     var currentCordovaVersion = (!!retrievedObject) ? retrievedObject.currentCordovaVersion : 0;
     cordovaLink = "cordova/" + cordovaVersions[currentCordovaVersion];
 } else {
-    cordovaLink = "cordova/" + cordovaVersionFromUrl;
+    cordovaLink = "cordova/" + localStorage.getItem("cordovaVersionFromUrl");
 }
-
 
 var cordovaScript = document.createElement('script');
 cordovaScript.setAttribute("type", "text/javascript");

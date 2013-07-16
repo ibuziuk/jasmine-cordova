@@ -1,6 +1,14 @@
 <!DOCTYPE html>
 <html>
     <head>
+        <script type="text/javascript">
+            window.bsUserAgent = window.navigator.userAgent;
+            window.opener.document.getElementById('userAgentInfo').innerHTML = bsUserAgent;
+            window._bsOriginalWindowOpen = window._bsOriginalWindowOpen || window.open;
+            if (window.opener.ripple) {
+                window.opener.ripple('bootstrap').inject(window, document);
+            }
+        </script>
         <title>Jasmine Spec Runner</title>
         <script type="text/javascript" src="spec/cordovaSwitcher.js"></script>
         <!-- jasmine source -->
