@@ -1,11 +1,20 @@
+/*
+  *  cordovaSwither.js gets values after '#' sign and adds <script> with necessary cordova.js necessary based on these values
+  *  see index.html
+ */
 var parameters = window.location.hash.substr(1).split(",");
-if (parameters[0].substring(0, 7) === "cordova") {
-    localStorage.setItem("cordovaVersionFromUrl", parameters[0]);
-    window.needToCheckAllCordovaVersions = parameters[1]; // XXX global flag
-}
 var cordovaLink;
 
-if (!!window.needToCheckAllCordovaVersions) {
+switch (parameters[0]) {
+    case "checkOne" :
+        localStorage.setItem("cordovaVersionFromUrl", parameters[1]);
+        break;
+    case "checkAll" :
+        window.checkAll = parameters[0]; // XXX global flag
+        break;
+}
+
+if (!!window.checkAll) {
     var cordovaVersions = new Array();
     cordovaVersions[0] = "cordova-2.0.0.js";
     cordovaVersions[1] = "cordova-2.1.0.js";
@@ -26,6 +35,7 @@ if (!!window.needToCheckAllCordovaVersions) {
     cordovaLink = "cordova/" + localStorage.getItem("cordovaVersionFromUrl");
 }
 
+// Adding script with cordova.js we want to check
 var cordovaScript = document.createElement('script');
 cordovaScript.setAttribute("type", "text/javascript");
 cordovaScript.setAttribute("src", cordovaLink);

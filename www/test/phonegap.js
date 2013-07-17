@@ -8,9 +8,9 @@ describe("Phonegap", function () {
         if (currentIndex <= lastIndex) {
             var currentCordovaVersion = getCurrentCordovaVersion(currentIndex);
             addCordovaVersionInfo(currentCordovaVersion);
-            addInfoAboutCordovaVersionToAllDescriptionLinks(currentCordovaVersion);
+            addCordovaVersionToAllDescriptionLinks(currentCordovaVersion);
             saveTestResults();
-            if(currentIndex !== 9) {
+            if(currentIndex !== lastIndex) {
                 incrementCordovaVersion(currentIndex);
                 location.reload();
             } else { // we reach the last element of the array, all tests have been run
@@ -20,20 +20,12 @@ describe("Phonegap", function () {
     };
 
     var getCurrentCordovaVersion = function(currentIndex) {
-        return "Cordova-2." + currentIndex + ".0.js";
+        return "cordova-2." + currentIndex + ".0.js";
     };
 
     var incrementCordovaVersion = function(currentCordovaVersion) {
         var newObj = {"currentCordovaVersion" : ++currentCordovaVersion};
         localStorage.setItem("currentCordovaVersion", JSON.stringify(newObj));
-    };
-
-    var addInfoAboutCordovaVersionToAllDescriptionLinks = function(currentCordovaVersion) {
-        var links = document.getElementsByClassName("description");
-        for(var i = 0; i < links.length; i++){
-            var hrefWithCordovaVersion = links[i].getAttribute("href") + "#,afterAllTests,"  + currentCordovaVersion;
-            links[i].setAttribute("href", hrefWithCordovaVersion);
-        }
     };
 
     var addCordovaVersionInfo = function(currentCordovaVersion) {
@@ -46,6 +38,14 @@ describe("Phonegap", function () {
         document.body.insertBefore(cordovaVersionContainer, document.body.firstElementChild);
     };
 
+    var addCordovaVersionToAllDescriptionLinks = function(currentCordovaVersion) {
+        var links = document.getElementsByClassName("description");
+        for(var i = 0; i < links.length; i++){
+            var hrefWithCordovaVersion = links[i].getAttribute("href") + "#checkOne,"  + currentCordovaVersion;
+            links[i].setAttribute("href", hrefWithCordovaVersion);
+        }
+    };
+
     var saveTestResults = function() {
         var previousResults = localStorage.getItem("results");
         var results = (!!previousResults) ? previousResults + document.body.innerHTML : document.body.innerHTML;
@@ -56,7 +56,7 @@ describe("Phonegap", function () {
         document.body.innerHTML = localStorage.getItem("results");
         localStorage.removeItem("results");
         localStorage.removeItem("currentCordovaVersion");
-        delete window.needToCheckAllCordovaVersions;
+        delete window.checkAll;
     };
 
     it("Device API", function () {
@@ -342,10 +342,10 @@ describe("Phonegap", function () {
         });
     });
 
-    if (!!window.needToCheckAllCordovaVersions) {
+    if (!!window.checkAll) {
         it("Switching cordova version", function() {
            switchCordovaVersion(); // XXX switching cordova js version in a separate jasmine test
-           var pendingIconsOfThisTest = document.getElementsByClassName("pending"); // XXX removing pending icon of this test
+           var pendingIconsOfThisTest = document.getElementsByClassName("pending"); // XXX removing pending icons of this test
            for (index = pendingIconsOfThisTest.length - 1; index >= 0; index--) {
                 pendingIconsOfThisTest[index].parentNode.removeChild(pendingIconsOfThisTest[index]);
             }
