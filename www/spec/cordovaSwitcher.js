@@ -2,6 +2,7 @@
   *  cordovaSwither.js gets values after '#' sign and adds <script> with necessary cordova.js based on these values
   *  see index.html
  */
+window.alert = console.log; // skipping annoying alert pop-up's
 var parameters = window.location.hash.substr(1).split(",");
 var cordovaLink;
 
