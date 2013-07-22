@@ -1,31 +1,24 @@
 describe("Phonegap", function () {
 
     var switchCordovaVersion = function() {
-        var lastIndex = 9; // last index of the array with all cordova.js versions - see cordovaSwither.js
-        var retrievedObject = JSON.parse(localStorage.getItem("currentCordovaVersion"));
-        var currentIndex = (!!retrievedObject) ? retrievedObject.currentCordovaVersion : 0;
+        var cordovaVersionsToCheck = JSON.parse(localStorage.cordovaVersionsToCheck);
+        var currentCordovaVersion = cordovaVersionsToCheck[0];
 
-        if (currentIndex <= lastIndex) {
-            var currentCordovaVersion = getCurrentCordovaVersion(currentIndex);
-            addCordovaVersionInfo(currentCordovaVersion);
-            addCordovaVersionToAllDescriptionLinks(currentCordovaVersion);
-            saveTestResults();
-            if(currentIndex !== lastIndex) {
-                incrementCordovaVersion(currentIndex);
-                location.reload();
-            } else { // we reach the last element of the array, all tests have been run
-                doAfterAllTests();
-            }
+        addCordovaVersionInfo(currentCordovaVersion);
+        addCordovaVersionToAllDescriptionLinks(currentCordovaVersion);
+        saveTestResults();
+
+        if (cordovaVersionsToCheck.length !== 1) {
+            deleteCheckedCordovaVersion(cordovaVersionsToCheck);
+            location.reload();
+        } else { // we reach the last element of the array, all tests have been run
+            doAfterAllTests();
         }
     };
 
-    var getCurrentCordovaVersion = function(currentIndex) {
-        return "cordova-2." + currentIndex + ".0.js";
-    };
-
-    var incrementCordovaVersion = function(currentCordovaVersion) {
-        var newObj = {"currentCordovaVersion" : ++currentCordovaVersion};
-        localStorage.setItem("currentCordovaVersion", JSON.stringify(newObj));
+    var deleteCheckedCordovaVersion  = function(cordovaVersionsToCheck) {
+        cordovaVersionsToCheck.shift(); // removing first element of the array
+        localStorage.cordovaVersionsToCheck = JSON.stringify(cordovaVersionsToCheck);
     };
 
     var addCordovaVersionInfo = function(currentCordovaVersion) {
@@ -53,13 +46,13 @@ describe("Phonegap", function () {
     };
 
     var doAfterAllTests = function() {
-        document.body.innerHTML = localStorage.getItem("results");
-        localStorage.removeItem("results");
-        localStorage.removeItem("currentCordovaVersion");
+        document.body.innerHTML = localStorage.results;
+        delete localStorage.results;
+        delete localStorage["cordovaVersionsToCheck"];
         delete window.checkAll;
     };
 
-    it("Device API", function () {
+    xit("Device API", function () {
         console.log("Testing Notification API");
 
         expect(device).toBeDefined();
@@ -152,7 +145,7 @@ describe("Phonegap", function () {
         });
     });
 
-    it("Geolocation API", function () {
+    xit("Geolocation API", function () {
         console.log("Testing Geolocation API");
 
         var obj = {
@@ -198,7 +191,7 @@ describe("Phonegap", function () {
         });
     });
 
-    it("Connection API", function () {
+    xit("Connection API", function () {
         console.log("Testing Geolocation API");
 
         var networkState = navigator.connection.type;
@@ -212,10 +205,10 @@ describe("Phonegap", function () {
         states[Connection.CELL] = 'Cell generic connection';
         states[Connection.NONE] = 'No network connection';
 
-        expect(states[networkState]).toBe(states[Connection.ETHERNET]); // By Default "Ethernet" Connection is used in the CordovaSim (it can be changed in the "Device & Network Setting" tab)
+        expect(states[networkState]).toBe(states[Connection.ETHERNET]); // By default "Ethernet" Connection is used in the CordovaSim (it can be changed in the "Device & Network Setting" tab)
     });
 
-    it("Globalization API", function () {
+    xit("Globalization API", function () {
         console.log("Testing Globalization API");
 
         var obj = {
@@ -342,7 +335,7 @@ describe("Phonegap", function () {
         });
     });
 
-    if (!!window.checkAll) {
+    if (window.checkAll) {
         it("Switching cordova version", function() {
            switchCordovaVersion(); // XXX switching cordova js version in a separate jasmine test
            var pendingIconsOfThisTest = document.getElementsByClassName("pending"); // XXX removing pending icons of this test
