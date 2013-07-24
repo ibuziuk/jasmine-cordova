@@ -1,5 +1,4 @@
 describe("Phonegap", function () {
-
     var switchCordovaVersion = function() {
         var cordovaVersionsToCheck = JSON.parse(localStorage.cordovaVersionsToCheck);
         var currentCordovaVersion = cordovaVersionsToCheck[0];
@@ -19,6 +18,11 @@ describe("Phonegap", function () {
     var deleteCheckedCordovaVersion  = function(cordovaVersionsToCheck) {
         cordovaVersionsToCheck.shift(); // removing first element of the array
         localStorage.cordovaVersionsToCheck = JSON.stringify(cordovaVersionsToCheck);
+    };
+
+    var getCurrentCordovaVersion = function () {
+        var currentCordovaVersion = (window.checkAll) ? JSON.parse(localStorage.cordovaVersionsToCheck)[0] : localStorage.cordovaVersionFromUrl;
+        return currentCordovaVersion;
     };
 
     var addCordovaVersionInfo = function(currentCordovaVersion) {
@@ -58,9 +62,7 @@ describe("Phonegap", function () {
         expect(device).toBeDefined();
         expect(device).not.toBe(null);
 
-
-        // TODO - doesn't work with cordova 2.5.0 - 2.9.0
-/*      expect(device.name).toBeDefined();
+        expect(device.name).toBeDefined();
         expect(device.name).not.toBe(null);
 
         expect(device.cordova).toBeDefined();
@@ -73,7 +75,7 @@ describe("Phonegap", function () {
         expect(device.uuid).not.toBe(null);
 
         expect(device.version).toBeDefined();
-        expect(device.version).not.toBe(null);*/
+        expect(device.version).not.toBe(null);
     });
 
     it("Notification API", function () {
@@ -215,79 +217,81 @@ describe("Phonegap", function () {
         expect(states[networkState]).toBe(states[Connection.ETHERNET]); // By default "Ethernet" connection is used in the CordovaSim (it can be changed via "Device & Network Setting" tab)
     });
 
-    // TODO doesn't work with cordova 2.0.0 - 2.1.0
-    xit("Globalization API", function () {
-        console.log("Testing Globalization API");
+    // Globalization API doesn't work with cordova 2.0.0 - 2.1.0 - http://docs.phonegap.com/en/2.0.0/index.html
+    if (getCurrentCordovaVersion() !== "cordova-2.0.0.js" && getCurrentCordovaVersion() !== "cordova-2.1.0.js") { //XXX getCurrentCordovaVersion is called 2 times
+        it("Globalization API", function () {
+            console.log("Testing Globalization API");
 
-        var obj = {
-            successLanguage: function (language) {
-                expect(language).toBeDefined();
-                expect(language.value).toEqual(jasmine.any(String));
-            },
-            errorLanguage: function () {
-                console.log("Globalization preferredLanguage error");
-            },
-            successLocalName: function (locale) {
-                expect(locale).toBeDefined();
-                expect(locale.value).toEqual(jasmine.any(String));
-            },
-            errorLocalName: function () {
-                console.log("Globalization localName error");
-            },
-            successDatePattern: function (date) {
-                expect(date).toBeDefined();
-            },
-            errorDatePattern: function () {
-                console.log("Globalization datePattern error");
-            }
-        };
-        spyOn(obj, 'successLanguage').andCallThrough();
-        spyOn(obj, 'errorLanguage').andCallThrough();
+            var obj = {
+                successLanguage: function (language) {
+                    expect(language).toBeDefined();
+                    expect(language.value).toEqual(jasmine.any(String));
+                },
+                errorLanguage: function () {
+                    console.log("Globalization preferredLanguage error");
+                },
+                successLocalName: function (locale) {
+                    expect(locale).toBeDefined();
+                    expect(locale.value).toEqual(jasmine.any(String));
+                },
+                errorLocalName: function () {
+                    console.log("Globalization localName error");
+                },
+                successDatePattern: function (date) {
+                    expect(date).toBeDefined();
+                },
+                errorDatePattern: function () {
+                    console.log("Globalization datePattern error");
+                }
+            };
+            spyOn(obj, 'successLanguage').andCallThrough();
+            spyOn(obj, 'errorLanguage').andCallThrough();
 
-        spyOn(obj, 'successLocalName').andCallThrough();
-        spyOn(obj, 'errorLocalName').andCallThrough();
+            spyOn(obj, 'successLocalName').andCallThrough();
+            spyOn(obj, 'errorLocalName').andCallThrough();
 
-        spyOn(obj, 'successDatePattern').andCallThrough();
-        spyOn(obj, 'errorDatePattern').andCallThrough();
+            spyOn(obj, 'successDatePattern').andCallThrough();
+            spyOn(obj, 'errorDatePattern').andCallThrough();
 
-        runs(function () {
-            console.log("Testing Globalization getPreferredLanguage method");
-            navigator.globalization.getPreferredLanguage(obj.successLanguage, obj.errorLanguage);
+            runs(function () {
+                console.log("Testing Globalization getPreferredLanguage method");
+                navigator.globalization.getPreferredLanguage(obj.successLanguage, obj.errorLanguage);
+            });
+
+            waitsFor(function () {
+                return obj.successLanguage.callCount > 0 || obj.errorLanguage.callCount > 0;
+            });
+
+            runs(function () {
+                console.log("Testing Globalization getLocaleName method");
+                navigator.globalization.getLocaleName(obj.successLocalName, obj.errorLocalName);
+            });
+
+            waitsFor(function () {
+                return obj.successLocalName.callCount > 0 || obj.errorLocalName.callCount > 0;
+            });
+
+            runs(function () {
+                console.log("Testing Globalization getDatePattern method");
+                navigator.globalization.getDatePattern(obj.successDatePattern, obj.errorDatePattern);
+            });
+
+            waitsFor(function () {
+                return obj.successDatePattern.callCount > 0 || obj.errorDatePattern.callCount > 0;
+            });
+
+            runs(function () {
+                expect(obj.successLanguage.callCount).toBe(1);
+                expect(obj.errorLanguage.callCount).toBe(0);
+
+                expect(obj.successLocalName.callCount).toBe(1);
+                expect(obj.errorLocalName.callCount).toBe(0);
+
+                expect(obj.successDatePattern.callCount).toBe(1);
+                expect(obj.errorDatePattern.callCount).toBe(0);
+            });
         });
-
-        waitsFor(function () {
-            return obj.successLanguage.callCount > 0 || obj.errorLanguage.callCount > 0;
-        });
-
-        runs(function () {
-            console.log("Testing Globalization getLocaleName method");
-            navigator.globalization.getLocaleName(obj.successLocalName, obj.errorLocalName);
-        });
-
-        waitsFor(function () {
-            return obj.successLocalName.callCount > 0 || obj.errorLocalName.callCount > 0;
-        });
-
-        runs(function () {
-            console.log("Testing Globalization getDatePattern method");
-            navigator.globalization.getDatePattern(obj.successDatePattern, obj.errorDatePattern);
-        });
-
-        waitsFor(function () {
-            return obj.successDatePattern.callCount > 0 || obj.errorDatePattern.callCount > 0;
-        });
-
-        runs(function () {
-            expect(obj.successLanguage.callCount).toBe(1);
-            expect(obj.errorLanguage.callCount).toBe(0);
-
-            expect(obj.successLocalName.callCount).toBe(1);
-            expect(obj.errorLocalName.callCount).toBe(0);
-
-            expect(obj.successDatePattern.callCount).toBe(1);
-            expect(obj.errorDatePattern.callCount).toBe(0);
-        });
-    });
+    }
 
     it("Accelerometer API", function () {
         console.log("Testing Accelerometer API");

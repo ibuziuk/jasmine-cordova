@@ -36,7 +36,7 @@ if (window.checkAll) {
     var currentCordovaVersion = cordovaVersionsToCheck[0]; // current cordova version is the first element in the array
     cordovaLink = "cordova/" + currentCordovaVersion;
 } else {
-    cordovaLink = "cordova/" + localStorage.getItem("cordovaVersionFromUrl");
+    cordovaLink = "cordova/" + localStorage.cordovaVersionFromUrl;
 }
 
 // Adding script with cordova.js we want to check
