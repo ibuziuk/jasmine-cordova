@@ -21,8 +21,7 @@ describe("Phonegap", function () {
     };
 
     var getCurrentCordovaVersion = function () {
-        var currentCordovaVersion = (window.checkAll) ? JSON.parse(localStorage.cordovaVersionsToCheck)[0] : localStorage.cordovaVersionFromUrl;
-        return currentCordovaVersion;
+        return (window.checkAll) ? JSON.parse(localStorage.cordovaVersionsToCheck)[0] : localStorage.cordovaVersionFromUrl;
     };
 
     var addCordovaVersionInfo = function(currentCordovaVersion) {
@@ -152,28 +151,17 @@ describe("Phonegap", function () {
         });
     });
 
-    xit("Geolocation API", function () {
+    it("Geolocation API", function () {
         console.log("Testing Geolocation API");
 
         var obj = {
             success: function (position) {
                 expect(position.coords).toBeDefined();
-
-                expect(position.coords.longitude).toBeDefined();
-                expect(position.coords.longitude).not.toBeNull();
-
-                expect(position.coords.altitude).toBeDefined();
-                expect(position.coords.altitude).not.toBeNull();
-
-                expect(position.coords.accuracy).toBeDefined();
-                expect(position.coords.accuracy).not.toBeNull();
-
-                expect(position.coords.heading).toBeDefined();
-                expect(position.coords.heading).not.toBeNull();
-
-                expect(position.coords.speed).toBeDefined();
-                expect(position.coords.speed).not.toBeNull();
-
+                expect(position.coords.longitude).toEqual(jasmine.any(Number));
+                expect(position.coords.altitude).toEqual(jasmine.any(Number));
+                expect(position.coords.accuracy).toEqual(jasmine.any(Number));
+                expect(position.coords.heading).toBeDefined(); // for cordova 2.0.0 - 2.2.0 "heading" is NAN
+                expect(position.coords.speed).toBeDefined(); // for cordova 2.0.0 - 2.2.0 "sped" is null
                 expect(position.timestamp).toBeDefined();
                 expect(position.timestamp).not.toBeNull();
             },
