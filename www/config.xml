@@ -1,38 +1,14 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?><widget xmlns="http://www.w3.org/ns/widgets" xmlns:gap="http://phonegap.com/ns/1.0" id="jasmine" version="2.0.0">
-    <name>jasmine</name>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?><widget xmlns="http://www.w3.org/ns/widgets" xmlns:gap="http://phonegap.com/ns/1.0" id="jasmine.cordova" version="">
+    <name>jasmine cordova</name>
 
     <description>
-        A sample Apache Cordova application that responds to the deviceready event.
     </description>
 
-    <author email="aerogear-dev@lists.jboss.org" href="http://aerogear.org/">
-       JBoss by Red Hat
+    <author email="" href="">
+        Ilya Buziuk
     </author>
-
-	<plugins>
-        <plugin name="Device" value="CDVDevice"/>
-        <plugin name="Logger" value="CDVLogger"/>
-        <plugin name="Compass" value="CDVLocation"/>
-        <plugin name="Accelerometer" value="CDVAccelerometer"/>
-        <plugin name="Camera" value="CDVCamera"/>
-        <plugin name="NetworkStatus" value="CDVConnection"/>
-        <plugin name="Contacts" value="CDVContacts"/>
-        <plugin name="Debug Console" value="CDVDebugConsole"/>
-        <plugin name="Echo" value="CDVEcho"/>
-        <plugin name="File" value="CDVFile"/>
-        <plugin name="FileTransfer" value="CDVFileTransfer"/>
-        <plugin name="Geolocation" value="CDVLocation"/>
-        <plugin name="Notification" value="CDVNotification"/>
-        <plugin name="Media" value="CDVSound"/>
-        <plugin name="Capture" value="CDVCapture"/>
-        <plugin name="SplashScreen" value="CDVSplashScreen"/>
-        <plugin name="Battery" value="CDVBattery"/>
-        <plugin name="Globalization" value="CDVGlobalization"/>
-        <plugin name="InAppBrowser" value="CDVInAppBrowser"/>
-    </plugins>
     
-    <!-- Plugin definitions for Android
-    <plugins>
+  <plugins>
     <plugin name="App" value="org.apache.cordova.App"/>
     <plugin name="Geolocation" value="org.apache.cordova.GeoBroker"/>
     <plugin name="Device" value="org.apache.cordova.Device"/>
@@ -52,14 +28,17 @@
     <plugin name="Echo" value="org.apache.cordova.Echo" />
     <plugin name="Globalization" value="org.apache.cordova.Globalization"/>
     <plugin name="InAppBrowser" value="org.apache.cordova.InAppBrowser"/>
-</plugins>-->
+</plugins>
     
-    
+	<icon src="icon.png" />
+	    
     <feature name="http://api.phonegap.com/1.0/device"/>
+    <feature name="http://api.phonegap.com/1.0/geolocation"/>
 
     <preference name="orientation" value="default"/>
     <preference name="target-device" value="universal"/>
     <preference name="fullscreen" value="false"/>
 
     <access origin="*"/>
+
 </widget>
