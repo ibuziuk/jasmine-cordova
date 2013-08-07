@@ -30,7 +30,8 @@ if (window.checkAll) {
                                     "cordova-2.7.0.js",
                                     "cordova-2.8.0.js",
                                     "cordova-2.8.1.js",
-                                    "cordova-2.9.0.js"];
+                                    "cordova-2.9.0.js",
+                                    "cordova-3.0.0.js"];
         localStorage.cordovaVersionsToCheck = JSON.stringify(cordovaVersionsToCheck);
     }
     var currentCordovaVersion = cordovaVersionsToCheck[0]; // current cordova version is the first element in the array
